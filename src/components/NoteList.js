@@ -60,7 +60,6 @@ const NoteList = () => {
         created: new Date(),
         pinned: null,
       });
-      console.log("added note");
     }
     fetchNotes();
   };
