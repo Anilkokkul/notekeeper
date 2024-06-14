@@ -14,6 +14,7 @@ import NoteCard from "./NoteCard";
 import NoteForm from "./NoteForm";
 import { Button, Grid } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
+import { toast } from "react-toastify";
 
 const NoteList = () => {
   const [notes, setNotes] = useState([]);
@@ -35,6 +36,7 @@ const NoteList = () => {
       }));
       setNotes(notesArray);
     } catch (error) {
+      toast.info("Error while getting notes");
       console.error("Error fetching notes: ", error);
     }
   };
