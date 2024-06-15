@@ -15,10 +15,3 @@ const db = getFirestore(app);
 
 export { db };
 
-// const FirebaseContext = createContext(null);
-
-// const FIrebaseContext = ({ children }) => {
-//   return <FirebaseContext.Provider>{children}</FirebaseContext.Provider>;
-// };
-
-// export default FIrebaseContext;

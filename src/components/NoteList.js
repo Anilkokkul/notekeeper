@@ -1,5 +1,6 @@
 // src/components/NoteList.js
 import React, { useState, useEffect } from "react";
+import Stack from "@mui/material/Stack";
 import {
   collection,
   query,
@@ -8,6 +9,7 @@ import {
   updateDoc,
   doc,
   addDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "../context/FIrebase";
 import NoteCard from "./NoteCard";
@@ -54,12 +56,14 @@ const NoteList = () => {
       const noteRef = doc(db, "notes", note.id);
       await updateDoc(noteRef, note);
       setSelectedNote(null);
+      toast.success("Note updated Successfully");
     } else {
       await addDoc(collection(db, "notes"), {
         ...note,
         created: new Date(),
         pinned: null,
       });
+      toast.success("Note Added Successfully");
     }
     fetchNotes();
   };
@@ -69,15 +73,30 @@ const NoteList = () => {
       const noteRef = doc(db, "notes", note.id);
       if (!note.pinned) {
         await updateDoc(noteRef, { ...note, pinned: new Date() });
+        toast.info("Note pinned");
       } else {
         await updateDoc(noteRef, { pinned: null });
+        toast.info("Note unpinned");
       }
       fetchNotes();
     } catch (error) {
       console.error("Error updating pinned status: ", error);
+      toast.error("Error updating pinned status please retry");
     }
   };
   const notesToDisplay = notes.slice((page - 1) * 6, page * 6);
+
+  const handleDelete = async (id) => {
+    try {
+      const noteRef = doc(db, "notes", id);
+      await deleteDoc(noteRef);
+      fetchNotes();
+      toast.warn("Note deleted");
+    } catch (error) {
+      console.error("Error while deleting note", error);
+      toast.error("Error while deleting note please try again");
+    }
+  };
 
   const handleClose = () => {
     setSelectedNote(null);
@@ -91,22 +110,27 @@ const NoteList = () => {
           Add Note
         </Button>
       </div>
-      <Grid container spacing={2}>
+      <Grid container spacing={3} padding={4}>
         {notesToDisplay.map((note) => (
           <Grid item xs={12} sm={6} md={4} key={note.id}>
             <NoteCard
               note={note}
               onEdit={handleEdit}
               handlePinned={handlePinned}
+              handleDelete={handleDelete}
             />
           </Grid>
         ))}
       </Grid>
-      <Pagination
-        count={Math.ceil(notes.length / 6)}
-        page={page}
-        onChange={(e, value) => setPage(value)}
-      />
+      <Stack className="pagination">
+        <Pagination
+          count={Math.ceil(notes.length / 6)}
+          page={page}
+          onChange={(e, value) => setPage(value)}
+          variant="outlined"
+          shape="rounded"
+        />
+      </Stack>
       <NoteForm
         open={open}
         onClose={handleClose}
