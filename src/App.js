@@ -6,6 +6,7 @@ import NoteList from "./components/NoteList";
 function App() {
   return (
     <div className="app">
+      <h1>Note-Keeper</h1>
       <NoteList />
       <ToastContainer />
     </div>
